@@ -43,7 +43,9 @@ class UserCrudController extends AbstractCrudController
                 'Admin' => 'ROLE_ADMIN',         
             ])
             ->allowMultipleChoices()
-            ->renderExpanded();       
+            ->renderExpanded();  
+        yield TextField::new('firstName');
+        yield TextField::new('lastName');     
     }
     
 }

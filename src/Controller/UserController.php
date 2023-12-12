@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Patient;
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,6 +20,7 @@ class UserController extends AbstractController
     #[Route('/api/user/signup', name: 'createUser', methods: ['POST'])]
     public function cretateUser(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher, ValidatorInterface $validator): JsonResponse
     {
+        // Vérification de la desérialisation
         try {
             $user = $serializer->deserialize($request->getContent(), User::class, 'json');
         } catch (NotEncodableValueException $e) {
@@ -51,6 +53,13 @@ class UserController extends AbstractController
         try {
             $em->persist($user);
             $em->flush();
+
+            // création du patient associé au user
+            $patient = new Patient();
+            $patient->setUser($user);
+            $em->persist($patient);
+            $em->flush();
+
             return new JsonResponse(['message' => 'Utilisateur créé avec succès.'], Response::HTTP_CREATED);
         } catch (\Exception $e) {
             return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);

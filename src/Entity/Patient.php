@@ -14,10 +14,10 @@ class Patient
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $address = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(cascade: ['remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?user $user = null;
 
