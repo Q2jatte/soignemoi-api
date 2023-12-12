@@ -11,10 +11,7 @@ class Doctor
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $speciality = null;
+    private ?int $id = null;    
 
     #[ORM\Column(length: 255, unique: true)]    
     private ?string $registrationNumber = null;
@@ -30,19 +27,7 @@ class Doctor
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getSpeciality(): ?string
-    {
-        return $this->speciality;
-    }
-
-    public function setSpeciality(?string $speciality): static
-    {
-        $this->speciality = $speciality;
-
-        return $this;
-    }
+    }    
 
     public function getRegistrationNumber(): ?string
     {

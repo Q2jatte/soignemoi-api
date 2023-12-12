@@ -18,8 +18,7 @@ class DoctorCrudController extends AbstractCrudController
 
     
     public function configureFields(string $pageName): iterable
-    {
-        yield TextField::new('speciality');
+    {       
         yield TextField::new('registrationNumber');
         yield AssociationField::new('user');
         yield AssociationField::new('service');        
