@@ -1,4 +1,5 @@
 <?php
+// REGISTER NEW USER PATIENT BY API 
 
 namespace App\Controller;
 
