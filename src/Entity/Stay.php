@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\StayRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: StayRepository::class)]
 class Stay
@@ -12,15 +13,19 @@ class Stay
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["getStays"])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups(["getStays"])]
     private ?\DateTimeInterface $entranceDate = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups(["getStays"])]
     private ?\DateTimeInterface $dischargeDate = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(["getStays"])]
     private ?string $reason = null;
 
     #[ORM\ManyToOne]
@@ -28,6 +33,7 @@ class Stay
     private ?patient $patient = null;
 
     #[ORM\ManyToOne]
+    #[Groups(["getStays"])]
     #[ORM\JoinColumn(nullable: false)]
     private ?service $service = null;
 

@@ -33,6 +33,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $lastName = null;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?patient $patient = null;
+
 
     public function __toString()
     {
@@ -140,5 +143,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUsername(): string {
         return $this->getUserIdentifier();
+    }
+
+    public function getPatient(): ?patient
+    {
+        return $this->patient;
+    }
+
+    public function setPatient(?patient $patient): static
+    {
+        $this->patient = $patient;
+
+        return $this;
     }
 }

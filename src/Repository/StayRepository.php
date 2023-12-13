@@ -21,6 +21,17 @@ class StayRepository extends ServiceEntityRepository
         parent::__construct($registry, Stay::class);
     }
 
+    public function findStaysByPatient($patient): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.patient = :patient')
+            ->setParameter('patient', $patient)
+            ->orderBy('p.dischargeDate', 'DESC')            
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 //    /**
 //     * @return Stay[] Returns an array of Stay objects
 //     */

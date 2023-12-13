@@ -45,7 +45,15 @@ class Patient
 
     public function setUser(user $user): static
     {
-        $this->user = $user;
+        // Vérifiez si le champ user est déjà défini pour éviter les boucles infinies
+        if ($user !== $this->user) {
+            $this->user = $user;
+
+            // Assurez-vous que la relation est bidirectionnelle
+            if ($user !== null && $user->getPatient() !== $this) {
+                $user->setPatient($this);
+            }
+        }
 
         return $this;
     }

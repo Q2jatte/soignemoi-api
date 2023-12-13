@@ -44,7 +44,7 @@ class Staff
 
     public function setUser(user $user): static
     {
-        $this->user = $user;
+        $this->user = $user;        
 
         return $this;
     }    

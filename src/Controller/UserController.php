@@ -23,7 +23,14 @@ class UserController extends AbstractController
     {
         // Vérification de la desérialisation
         try {
-            $user = $serializer->deserialize($request->getContent(), User::class, 'json');
+            $userData = json_decode($request->getContent(), true);
+
+            // Extraction de l'adresse du tableau associé aux données de l'utilisateur
+            $address = $userData['address'] ?? null;
+            unset($userData['address']); // Suppression de l'adresse du tableau des données de l'utilisateur
+
+            $user = $serializer->deserialize(json_encode($userData), User::class, 'json');
+            
         } catch (NotEncodableValueException $e) {
             return new JsonResponse(['error' => 'Erreur de désérialisation : ' . $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }        
@@ -55,9 +62,15 @@ class UserController extends AbstractController
             $em->persist($user);
             $em->flush();
 
-            // création du patient associé au user
+            // création du patient associé au user            
             $patient = new Patient();
             $patient->setUser($user);
+
+            // Ajout de l'adresse au patient
+            if ($address !== null) {
+                $patient->setAddress($address);
+            }
+            
             $em->persist($patient);
             $em->flush();
 
