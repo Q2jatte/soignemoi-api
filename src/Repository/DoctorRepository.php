@@ -21,6 +21,17 @@ class DoctorRepository extends ServiceEntityRepository
         parent::__construct($registry, Doctor::class);
     }
 
+    public function findDoctorsByService($service): array
+    {
+
+        return $this->createQueryBuilder('d')
+            ->andWhere('d.service = :service')
+            ->setParameter('service', $service)                     
+            ->getQuery()
+            ->getResult()
+       ;
+    }
+
 //    /**
 //     * @return Doctor[] Returns an array of Doctor objects
 //     */

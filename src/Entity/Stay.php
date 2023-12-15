@@ -29,13 +29,17 @@ class Stay
     private ?string $reason = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?patient $patient = null;
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Patient $patient = null;
 
     #[ORM\ManyToOne]
     #[Groups(["getStays"])]
     #[ORM\JoinColumn(nullable: false)]
-    private ?service $service = null;
+    private ?Service $service = null;
+
+    #[ORM\ManyToOne(inversedBy: 'stays')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Doctor $doctor = null;
 
     public function getId(): ?int
     {
@@ -78,26 +82,38 @@ class Stay
         return $this;
     }
 
-    public function getPatient(): ?patient
+    public function getPatient(): ?Patient
     {
         return $this->patient;
     }
 
-    public function setPatient(?patient $patient): static
+    public function setPatient(?Patient $patient): static
     {
         $this->patient = $patient;
 
         return $this;
     }
 
-    public function getService(): ?service
+    public function getService(): ?Service
     {
         return $this->service;
     }
 
-    public function setService(?service $service): static
+    public function setService(?Service $service): static
     {
         $this->service = $service;
+
+        return $this;
+    }
+
+    public function getDoctor(): ?Doctor
+    {
+        return $this->doctor;
+    }
+
+    public function setDoctor(?Doctor $doctor): static
+    {
+        $this->doctor = $doctor;
 
         return $this;
     }

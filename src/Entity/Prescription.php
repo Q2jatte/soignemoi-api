@@ -22,11 +22,11 @@ class Prescription
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?doctor $doctor = null;
+    private ?Doctor $doctor = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?patient $patient = null;
+    private ?Patient $patient = null;
 
     public function getId(): ?int
     {
@@ -57,24 +57,24 @@ class Prescription
         return $this;
     }
 
-    public function getDoctor(): ?doctor
+    public function getDoctor(): ?Doctor
     {
         return $this->doctor;
     }
 
-    public function setDoctor(?doctor $doctor): static
+    public function setDoctor(?Doctor $doctor): static
     {
         $this->doctor = $doctor;
 
         return $this;
     }
 
-    public function getPatient(): ?patient
+    public function getPatient(): ?Patient
     {
         return $this->patient;
     }
 
-    public function setPatient(?patient $patient): static
+    public function setPatient(?Patient $patient): static
     {
         $this->patient = $patient;
 

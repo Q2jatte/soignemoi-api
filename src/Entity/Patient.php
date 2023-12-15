@@ -19,7 +19,7 @@ class Patient
 
     #[ORM\OneToOne(cascade: ['remove'])]
     #[ORM\JoinColumn(nullable: false)]
-    private ?user $user = null;
+    private ?User $user = null;
 
     public function getId(): ?int
     {
@@ -38,12 +38,12 @@ class Patient
         return $this;
     }
 
-    public function getUser(): ?user
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUser(user $user): static
+    public function setUser(User $user): static
     {
         // Vérifiez si le champ user est déjà défini pour éviter les boucles infinies
         if ($user !== $this->user) {

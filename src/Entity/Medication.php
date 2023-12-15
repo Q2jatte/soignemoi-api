@@ -22,7 +22,7 @@ class Medication
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?prescription $prescription = null;
+    private ?Prescription $prescription = null;
 
     public function getId(): ?int
     {
@@ -53,12 +53,12 @@ class Medication
         return $this;
     }
 
-    public function getPrescription(): ?prescription
+    public function getPrescription(): ?Prescription
     {
         return $this->prescription;
     }
 
-    public function setPrescription(?prescription $prescription): static
+    public function setPrescription(?Prescription $prescription): static
     {
         $this->prescription = $prescription;
 

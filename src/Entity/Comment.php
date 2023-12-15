@@ -25,7 +25,7 @@ class Comment
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?doctor $doctor = null;
+    private ?Doctor $doctor = null;
 
     public function getId(): ?int
     {

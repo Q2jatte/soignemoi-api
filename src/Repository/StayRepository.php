@@ -32,28 +32,19 @@ class StayRepository extends ServiceEntityRepository
         ;
     }
 
-//    /**
-//     * @return Stay[] Returns an array of Stay objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('s.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    // retourne les séjours en cours et à venir
+    public function findStaysByDoctor($doctor): array
+    {
+        $today = new \DateTime();
 
-//    public function findOneBySomeField($value): ?Stay
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.doctor = :doctor')
+            ->andWhere('(:today BETWEEN p.entranceDate AND p.dischargeDate) OR (:today < p.entranceDate)')
+            ->setParameter('doctor', $doctor)
+            ->setParameter('today', $today)
+            ->orderBy('p.dischargeDate', 'DESC')            
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

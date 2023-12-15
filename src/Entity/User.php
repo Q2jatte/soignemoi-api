@@ -6,6 +6,7 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -28,13 +29,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["getDoctor"])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["getDoctor"])]
     private ?string $lastName = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?patient $patient = null;
+    private ?Patient $patient = null;
 
 
     public function __toString()
@@ -136,6 +139,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getPatient(): ?Patient
+    {
+        return $this->patient;
+    }
+
+    public function setPatient(?Patient $patient): static
+    {
+        $this->patient = $patient;
+
+        return $this;
+    }    
+
     /**
      * Méthode getUsername qui permet de retourner le champ qui est utilisé pour l'authentification.
      *
@@ -143,17 +158,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUsername(): string {
         return $this->getUserIdentifier();
-    }
-
-    public function getPatient(): ?patient
-    {
-        return $this->patient;
-    }
-
-    public function setPatient(?patient $patient): static
-    {
-        $this->patient = $patient;
-
-        return $this;
     }
 }
