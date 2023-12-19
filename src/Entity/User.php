@@ -29,15 +29,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getDoctor"])]
+    #[Groups(["getDoctor", "getPatients"])]   
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getDoctor"])]
+    #[Groups(["getDoctor", "getPatients"])]    
     private ?string $lastName = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Patient $patient = null;
+
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Doctor $doctor = null;
 
 
     public function __toString()
@@ -147,6 +150,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPatient(?Patient $patient): static
     {
         $this->patient = $patient;
+
+        return $this;
+    }
+
+    public function getDoctor(): ?Doctor
+    {
+        return $this->doctor;
+    }
+
+    public function setDoctor(?Doctor $doctor): static
+    {
+        $this->doctor = $doctor;
 
         return $this;
     }    

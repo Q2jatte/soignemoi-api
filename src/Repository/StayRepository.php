@@ -47,4 +47,19 @@ class StayRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    // retourne les patients du jour pour un docteur
+    public function findPatientByDoctor($doctor): array
+    {
+        $today = new \DateTime();
+
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.doctor = :doctor')
+            ->andWhere('(:today > p.entranceDate AND :today <= p.dischargeDate)')
+            ->setParameter('doctor', $doctor)
+            ->setParameter('today', $today)
+            ->orderBy('p.dischargeDate', 'DESC')            
+            ->getQuery()
+            ->getResult();
+    }
 }

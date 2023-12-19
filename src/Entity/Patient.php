@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\PatientRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PatientRepository::class)]
 class Patient
@@ -12,6 +13,7 @@ class Patient
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["getPatients"])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -19,6 +21,7 @@ class Patient
 
     #[ORM\OneToOne(cascade: ['remove'])]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["getPatients"])]
     private ?User $user = null;
 
     public function getId(): ?int

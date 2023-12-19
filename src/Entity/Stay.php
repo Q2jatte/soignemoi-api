@@ -13,15 +13,15 @@ class Stay
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getStays"])]
+    #[Groups(["getStays", "getPatients"])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Groups(["getStays"])]
+    #[Groups(["getStays", "getPatients"] )]    
     private ?\DateTimeInterface $entranceDate = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    #[Groups(["getStays"])]
+    #[Groups(["getStays", "getPatients"])]    
     private ?\DateTimeInterface $dischargeDate = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -29,7 +29,9 @@ class Stay
     private ?string $reason = null;
 
     #[ORM\ManyToOne]
+    #[Groups(["getPatients"])]
     #[ORM\JoinColumn(nullable: true)]
+    
     private ?Patient $patient = null;
 
     #[ORM\ManyToOne]
