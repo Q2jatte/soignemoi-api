@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -37,28 +38,30 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
-//    /**
-//     * @return User[] Returns an array of User objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('u.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    // retourne les patients en fonction d'une partie du nom
+    
+    public function findPatient($partial): array
+    {   
+        
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.firstName LIKE :partial OR u.lastName LIKE :partial') 
+            ->andWhere('u.patient IS NOT NULL')          
+            ->setParameter('partial', '%' . $partial . '%')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+            
+/*
+            $rsm = new ResultSetMappingBuilder($this->getEntityManager());
+            $rsm->addRootEntityFromClassMetadata('App\Entity\User', 'u');
 
-//    public function findOneBySomeField($value): ?User
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+            $query = $this->getEntityManager()->createNativeQuery(
+                'SELECT * FROM user WHERE (first_name LIKE :partial OR last_name LIKE :partial) AND patient_id IS NOT NULL LIMIT 10', $rsm);
+
+            $query->setParameter('partial', '%' . $partial . '%');
+
+            return $query->getResult();*/
+    }
+
+        
 }

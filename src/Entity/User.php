@@ -14,6 +14,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["searchPatient"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
@@ -29,11 +30,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getDoctor", "getPatients"])]   
+    #[Groups(["getDoctor", "getPatients", "searchPatient"])]   
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getDoctor", "getPatients"])]    
+    #[Groups(["getDoctor", "getPatients", "searchPatient"])]    
     private ?string $lastName = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]

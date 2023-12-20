@@ -19,5 +19,16 @@ class PatientRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Patient::class);
+    }  
+    
+    public function findPatientByName($query)
+    {
+        return $this->createQueryBuilder('p')
+            ->leftJoin('p.user', 'u') // Assurez-vous que 'user' est le nom de votre relation dans l'entité Patient            
+            ->andWhere('u.firstName LIKE :query OR u.lastName LIKE :query') 
+            ->andWhere('u.patient IS NOT NULL')  
+            ->setParameter('query', '%' . $query . '%')
+            ->getQuery()
+            ->getResult();
     }
 }
