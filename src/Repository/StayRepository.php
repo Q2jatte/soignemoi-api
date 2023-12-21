@@ -21,11 +21,44 @@ class StayRepository extends ServiceEntityRepository
         parent::__construct($registry, Stay::class);
     }
 
+    // Tout les séjours d'un patient
     public function findStaysByPatient($patient): array
     {
         return $this->createQueryBuilder('p')
             ->andWhere('p.patient = :patient')
             ->setParameter('patient', $patient)
+            ->orderBy('p.dischargeDate', 'DESC')            
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    // Séjour en cours d'un patient
+    public function findCurrentStay($patient): array
+    {
+        $today = new \DateTime();
+
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.patient = :patient')
+            ->andWhere('(:today > p.entranceDate AND :today <= p.dischargeDate)')
+            ->setParameter('patient', $patient)
+            ->setParameter('today', $today)
+            ->orderBy('p.dischargeDate', 'DESC')            
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    // Séjours précédent d'un patient
+    public function findOldStays($patient): array
+    {
+        $today = new \DateTime();
+
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.patient = :patient')
+            ->andWhere('(:today > p.dischargeDate)')
+            ->setParameter('patient', $patient)
+            ->setParameter('today', $today)
             ->orderBy('p.dischargeDate', 'DESC')            
             ->getQuery()
             ->getResult()

@@ -20,6 +20,30 @@ class PrescriptionRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Prescription::class);
     }
+/*
+    public function findPrescriptionsByPatient($patient): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.patient = :val')
+            ->setParameter('val', $patient)
+            ->orderBy('p.startAt', 'DESC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+    }
+*/
+    
+    public function findPrescriptionsByPatient($patient)
+    {
+        return $this->createQueryBuilder('p')
+            ->leftJoin('App\Entity\Medication', 'm', 'WITH', 'm.prescription = p')
+            ->select('p', 'm') // Sélectionner p et m pour les inclure dans le résultat
+            ->andWhere('p.patient = :val')
+            ->setParameter('val', $patient)
+            ->orderBy('p.startAt', 'DESC')            
+            ->getQuery()
+            ->getResult();           
+    }
 
 //    /**
 //     * @return Prescription[] Returns an array of Prescription objects

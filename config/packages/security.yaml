@@ -66,6 +66,9 @@ security:
         - { path: ^/api/stays, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/patients/search, roles: ROLE_STAFF } 
+        - { path: ^/api/patients/current, roles: ROLE_STAFF } 
+        - { path: ^/api/patients/old, roles: ROLE_STAFF } 
+        - { path: ^/api/prescriptions, roles: ROLE_STAFF } 
         - { path: ^/api/patients, roles: ROLE_DOCTOR } 
         - { path: ^/admin, roles: ROLE_ADMIN }    
 

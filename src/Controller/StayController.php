@@ -36,17 +36,44 @@ class StayController extends AbstractController
         return new JsonResponse($jsonStaysList, Response::HTTP_OK, [], true);        
     }
 
-    // GET STAYS BY PATIENT
+    // GET ALL STAYS BY PATIENT
     #[Route('/api/stays/{id}', name: 'getStaysByPatient', methods: ['GET'])]
     public function getStaysByPAtient(Patient $patient, StayRepository $stayRepository, SerializerInterface $serializer): JsonResponse
-    {   
-        // Retrieve the user from the token
-        $user = $this->getUser();
-        
+    { 
         $staysList = $stayRepository->findStaysByPatient($patient);
         $jsonStaysList = $serializer->serialize($staysList, 'json');
 
         return new JsonResponse($jsonStaysList, Response::HTTP_OK, [], true);        
+    }
+
+    // GET CURENT STAY FOR ONE PATIENT
+    #[Route('/api/stay/current/{id}', name: 'getCurrentStay', methods: ['GET'])]
+    public function getCurrentStay(Patient $patient, StayRepository $stayRepository, SerializerInterface $serializer): JsonResponse
+    {    
+        $stay = $stayRepository->findCurrentStay($patient);
+
+        if (!$stay) { // Si il n'y a pas de séjour en cours
+            return new JsonResponse(['error' => 'Pas de séjour en cours.'], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        $jsonStay = $serializer->serialize($stay, 'json', ['groups' => 'getStays']);
+
+        return new JsonResponse($jsonStay, Response::HTTP_OK, [], true);        
+    }
+
+    // GET OLD STAYS FOR ONE PATIENT
+    #[Route('/api/stay/old/{id}', name: 'getOldStays', methods: ['GET'])]
+    public function getOldStays(Patient $patient, StayRepository $stayRepository, SerializerInterface $serializer): JsonResponse
+    {    
+        $stays = $stayRepository->findOldStays($patient);
+
+        if (!$stays) { // Si il n'y a pas de séjour en cours
+            return new JsonResponse(['error' => 'Pas de séjour précédent.'], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        $jsonStays = $serializer->serialize($stays, 'json', ['groups' => 'getStays']);
+
+        return new JsonResponse($jsonStays, Response::HTTP_OK, [], true);        
     }
 
     // GET STAYS BY DOCTOR
@@ -93,8 +120,12 @@ class StayController extends AbstractController
             // Préparation des data
             $user = $this->getUser();
             $patient = $user->getPatient();
-            $entranceDate = new \DateTime($dto->entranceDate);
-            $dischergeDate = new \DateTime($dto->dischargeDate);
+
+            // Définir l'heure à midi (12:00:00) pour les dates d'entrée et de sortie
+            $entranceDate = new \DateTime($dto->entranceDate . ' 12:00:00');
+            $dischargeDate = new \DateTime($dto->dischargeDate . ' 12:00:00');
+            //$entranceDate = new \DateTime($dto->entranceDate);
+            //$dischergeDate = new \DateTime($dto->dischargeDate);
             $doctor = $em->getRepository(Doctor::class)->find($dto->doctor);            
 
             // Création du nouveau séjour
@@ -102,7 +133,7 @@ class StayController extends AbstractController
             $stay->setPatient($patient);
             $stay->setReason($dto->reason);
             $stay->setEntranceDate($entranceDate);
-            $stay->setDischargeDate($dischergeDate);
+            $stay->setDischargeDate($dischargeDate);
             $stay->setDoctor($doctor);            
             $stay->setService($doctor->getService());
 
