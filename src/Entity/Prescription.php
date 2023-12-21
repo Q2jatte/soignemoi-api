@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\PrescriptionRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PrescriptionRepository::class)]
@@ -30,6 +32,15 @@ class Prescription
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?Patient $patient = null;
+
+    #[ORM\OneToMany(mappedBy: 'prescription', targetEntity: Medication::class)]
+    #[Groups(["getPrescriptions"])]
+    private Collection $medications;
+
+    public function __construct()
+    {
+        $this->medications = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -80,6 +91,36 @@ class Prescription
     public function setPatient(?Patient $patient): static
     {
         $this->patient = $patient;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Stay>
+     */
+    public function getMedications(): Collection
+    {
+        return $this->medications;
+    }
+
+    public function addMedication(Medication $medication): static
+    {
+        if (!$this->medications->contains($medication)) {
+            $this->medications->add($medication);
+            $medication->setPrescription($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMedication(Medication $medication): static
+    {
+        if ($this->medications->removeElement($medication)) {
+            // set the owning side to null (unless already changed)
+            if ($medication->getPrescription() === $this) {
+                $medication->setPrescription(null);
+            }
+        }
 
         return $this;
     }
