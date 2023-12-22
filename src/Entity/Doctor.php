@@ -22,7 +22,7 @@ class Doctor
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["getDoctor"])]
+    #[Groups(["getDoctor", "getComments"])]    
     private ?User $user = null;
 
     #[ORM\ManyToOne]

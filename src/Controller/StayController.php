@@ -22,6 +22,27 @@ use Symfony\Component\Serializer\Exception\UnexpectedValueException;
 
 class StayController extends AbstractController
 {
+    // ONE GET FOR ALL CASE - TODO REMPLACER toutes les méthodes getStays par celle-ci
+    #[Route('/api/patients/{id}/stays/{status}', name: 'getStaysByPatientAndStatus', methods: ['GET'])]
+    public function getStaysByPatientAndStatus(Patient $patient, $status, StayRepository $stayRepository, SerializerInterface $serializer): JsonResponse
+    {
+        // Vérifier le statut pour s'assurer qu'il est valide (current, old, future ou all)
+        $validStatuses = ['current', 'old', 'future', 'all'];
+        if (!in_array($status, $validStatuses)) {
+            return new JsonResponse(['error' => 'Statut de séjour invalide.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        // Obtenir les séjours en fonction du patient et du statut  
+        if (!$patient) {
+            return new JsonResponse(['error' => 'Patient non trouvé.'], Response::HTTP_NOT_FOUND);
+        }
+        
+        $stays = $stayRepository->findStaysByPatientAndStatus($patient, $status);                
+        $jsonStays = $serializer->serialize($stays, 'json', ['groups' => 'getStays']);
+
+        return new JsonResponse($jsonStays, Response::HTTP_OK, [], true);
+    }
+
     // GET USER AUTH STAYS
     #[Route('/api/stays', name: 'getStays', methods: ['GET'])]
     public function getStays(StayRepository $stayRepository, SerializerInterface $serializer): JsonResponse

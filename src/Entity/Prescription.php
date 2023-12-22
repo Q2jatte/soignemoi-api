@@ -23,10 +23,11 @@ class Prescription
     private ?\DateTimeInterface $startAt = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups(["getPrescriptions"])]
     private ?\DateTimeInterface $endAt = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Doctor $doctor = null;
 
     #[ORM\ManyToOne]

@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\CommentRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
 class Comment
@@ -12,20 +13,28 @@ class Comment
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["getComments"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["getComments"])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(["getComments"])]
     private ?string $content = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Groups(["getComments"])]
     private ?\DateTimeInterface $createAt = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
+    #[Groups(["getComments"])]
     private ?Doctor $doctor = null;
+
+    #[ORM\ManyToOne(inversedBy: 'comments')]
+    private ?patient $patient = null;
 
     public function getId(): ?int
     {
@@ -76,6 +85,18 @@ class Comment
     public function setDoctor(?doctor $doctor): static
     {
         $this->doctor = $doctor;
+
+        return $this;
+    }
+
+    public function getPatient(): ?patient
+    {
+        return $this->patient;
+    }
+
+    public function setPatient(?patient $patient): static
+    {
+        $this->patient = $patient;
 
         return $this;
     }
