@@ -30,18 +30,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getDoctor", "getPatients", "searchPatient", "getComments"])]   
+    #[Groups(["getDoctor", "getPatients", "searchPatient", "getComments", "getProfile"])]   
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getDoctor", "getPatients", "searchPatient", "getComments"])]    
+    #[Groups(["getDoctor", "getPatients", "searchPatient", "getComments", "getProfile"])]    
     private ?string $lastName = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Patient $patient = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[Groups(["getProfile"])]
     private ?Doctor $doctor = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["getProfile"])]
+    private ?string $profileImageName = null;
 
 
     public function __toString()
@@ -174,5 +179,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUsername(): string {
         return $this->getUserIdentifier();
+    }
+
+    public function getProfileImageName(): ?string
+    {
+        return $this->profileImageName;
+    }
+
+    public function setProfileImageName(?string $profileImageName): static
+    {
+        $this->profileImageName = $profileImageName;
+
+        return $this;
     }
 }

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\StaffRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: StaffRepository::class)]
 class Staff
@@ -14,6 +15,7 @@ class Staff
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["getProfile"])]
     private ?string $position = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]

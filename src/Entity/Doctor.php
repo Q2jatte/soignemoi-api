@@ -27,6 +27,7 @@ class Doctor
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["getProfile"])]   
     private ?Service $service = null;
 
     #[ORM\OneToMany(mappedBy: 'doctor', targetEntity: Stay::class)]

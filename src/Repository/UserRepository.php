@@ -42,7 +42,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     
     public function findPatient($partial): array
     {   
-        
         return $this->createQueryBuilder('u')
             ->andWhere('u.firstName LIKE :partial OR u.lastName LIKE :partial') 
             ->andWhere('u.patient IS NOT NULL')          
@@ -50,18 +49,5 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setMaxResults(10)
             ->getQuery()
             ->getResult();
-            
-/*
-            $rsm = new ResultSetMappingBuilder($this->getEntityManager());
-            $rsm->addRootEntityFromClassMetadata('App\Entity\User', 'u');
-
-            $query = $this->getEntityManager()->createNativeQuery(
-                'SELECT * FROM user WHERE (first_name LIKE :partial OR last_name LIKE :partial) AND patient_id IS NOT NULL LIMIT 10', $rsm);
-
-            $query->setParameter('partial', '%' . $partial . '%');
-
-            return $query->getResult();*/
-    }
-
-        
+    }   
 }

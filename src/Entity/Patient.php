@@ -19,6 +19,7 @@ class Patient
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(["getProfile"])]
     private ?string $address = null;
 
     #[ORM\OneToOne(cascade: ['remove'])]

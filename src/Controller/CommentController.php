@@ -22,7 +22,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class CommentController extends AbstractController
 {
     // GET COMMENTS FOR ONE PATIENT
-    #[Route('/api/comments/{id}', name: 'getcomments', methods: ['GET'])]
+    #[Route('/api/comments/{id}', name: 'getComments', methods: ['GET'])]
     public function getComments(Patient $patient, CommentRepository $commentRepository, SerializerInterface $serializer): JsonResponse
     {
         $comments = $commentRepository->findCommentsByPatient($patient);
@@ -34,10 +34,23 @@ class CommentController extends AbstractController
         $jsonData = $serializer->serialize($comments, 'json', ['groups' => 'getComments']);
 
         return new JsonResponse($jsonData, Response::HTTP_OK, [], true);        
+    } 
+    
+    // GET ONE COMMENT
+    #[Route('/api/comment/{id}', name: 'getComment', methods: ['GET'])]
+    public function getComment(Comment $comment, SerializerInterface $serializer): JsonResponse
+    {
+        if (!$comment) { // Si le commentaire n'existe pas
+            return new JsonResponse(['error' => 'Commentaire inconnue.'], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        $jsonComment = $serializer->serialize($comment, 'json', ['groups' => 'getComments']);
+
+        return new JsonResponse($jsonComment, Response::HTTP_OK, [], true);          
     }  
     
     // POST NEW COMMENT FOR ONE PATIENT
-    #[Route('/api/comment/new', name: 'createComment', methods: ['POST'])]
+    #[Route('/api/comment', name: 'createComment', methods: ['POST'])]
     public function createCommentw(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, ValidatorInterface $validator): JsonResponse
     {
         // Vérification de la desérialisation

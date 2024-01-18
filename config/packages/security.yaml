@@ -56,7 +56,7 @@ security:
         ROLE_STAFF: ROLE_PATIENT
         ROLE_DOCTOR: ROLE_PATIENT        
 
-    access_control:       
+    access_control:    
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/user/signup, roles: PUBLIC_ACCESS }
         - { path: ^/api/doctors, roles: PUBLIC_ACCESS }        
@@ -65,15 +65,16 @@ security:
         - { path: ^/api/recaptchaverify, roles: PUBLIC_ACCESS }       
         - { path: ^/api/stay, roles: IS_AUTHENTICATED_FULLY }  
         - { path: ^/api/stays, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }        
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }  
+        - { path: ^/api/user/profile, roles: IS_AUTHENTICATED_FULLY }        
         - { path: ^/api/patients, roles: ROLE_STAFF }
         - { path: ^/api/patients/search, roles: ROLE_STAFF } 
         - { path: ^/api/patients/current, roles: ROLE_STAFF } 
         - { path: ^/api/patients/old, roles: ROLE_STAFF } 
         - { path: ^/api/prescriptions, roles: ROLE_STAFF } 
         - { path: ^/api/comments, roles: ROLE_STAFF } 
-        - { path: ^/api/prescription/new, roles: ROLE_DOCTOR }
-        - { path: ^/api/comment/new, roles: ROLE_DOCTOR }
+        - { path: ^/api/prescription, roles: ROLE_STAFF }
+        - { path: ^/api/comment, roles: ROLE_STAFF }
         - { path: ^/api/patients, roles: ROLE_DOCTOR } 
         - { path: ^/admin, roles: ROLE_ADMIN }    
 

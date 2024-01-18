@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use App\Entity\Patient;
 use App\Entity\User;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -77,9 +78,25 @@ class UserController extends AbstractController
             return new JsonResponse(['message' => 'Utilisateur créé avec succès.'], Response::HTTP_CREATED);
         } catch (\Exception $e) {
             return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-        
+        }  
+    }
 
+    // Retourne les infos du profil en fonction du groupe utlisateur
+    #[Route('/api/user/profile', name: 'getProfile', methods: ['GET'])]
+    public function getProfile(UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
+    {
+        $user = $this->getUser();
         
+        if ($user) {
+            $id = $user->getId();
+        } else {
+            return new JsonResponse(['error' => 'Utilisateur non authentifié.'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $profile = $userRepository->find($id);
+        // serialization des données
+        $jsonData = $serializer->serialize($profile, 'json', ['groups' => 'getProfile']);
+        // réponse
+        return new JsonResponse($jsonData, Response::HTTP_OK, [], true);  
     }
 }

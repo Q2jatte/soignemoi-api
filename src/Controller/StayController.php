@@ -168,7 +168,7 @@ class StayController extends AbstractController
         }
     }
 
-
+    // Méthodes métier
     // Retourne une liste de jours ou le max de séjours est atteint
     private function overlappingDays($stays): array
     {

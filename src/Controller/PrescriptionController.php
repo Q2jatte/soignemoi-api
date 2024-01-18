@@ -34,10 +34,23 @@ class PrescriptionController extends AbstractController
         $jsonPrescriptions = $serializer->serialize($prescriptions, 'json', ['groups' => 'getPrescriptions']);
 
         return new JsonResponse($jsonPrescriptions, Response::HTTP_OK, [], true);        
+    }   
+    
+    // GET ONE PRESCRIPTION
+    #[Route('/api/prescription/{id}', name: 'getPrescription', methods: ['GET'])]
+    public function getPrescription(Prescription $prescription, SerializerInterface $serializer): JsonResponse
+    {
+        if (!$prescription) { // Si la prescription n'existe pas
+            return new JsonResponse(['error' => 'Prescription inconnue.'], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        $jsonPrescription = $serializer->serialize($prescription, 'json', ['groups' => 'getPrescriptions']);
+
+        return new JsonResponse($jsonPrescription, Response::HTTP_OK, [], true);        
     }    
 
     // POST NEW PRESCRIPTION FOR ONE PATIENT
-    #[Route('/api/prescription/new', name: 'createPrescription', methods: ['POST'])]
+    #[Route('/api/prescription', name: 'createPrescription', methods: ['POST'])]
     public function createPrescription(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, ValidatorInterface $validator): JsonResponse
     {
         // Vérification de la desérialisation
@@ -96,6 +109,32 @@ class PrescriptionController extends AbstractController
             return new JsonResponse(['message' => 'Prescription ajouté avec succès.'], Response::HTTP_CREATED);
         } catch (\Exception $e) {
             return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+    
+    // UPDATE END DATE PRESCRIPTION
+    #[Route('/api/prescription/{id}', name: 'updateEndDatePrescription', methods: ['PATCH'])]
+    public function updateEndDatePrescription(Prescription $prescription, Request $request, EntityManagerInterface $em, ValidatorInterface $validator): JsonResponse
+    {
+        // Vérification de la desérialisation
+        try {    
+            $jsonData = json_decode($request->getContent(), true);
+            $newEnd = new \DateTime($jsonData['date']);
+        } catch (NotEncodableValueException | UnexpectedValueException $e) {
+            return new JsonResponse(['error' => 'Erreur de désérialisation : ' . $e->getMessage()], Response::HTTP_BAD_REQUEST);
+        } 
+        
+        // Modification de la date
+        $prescription->setEndAt($newEnd);
+        
+        // Enregistrment de la prescription modifiée
+        try {
+            
+            $em->persist($prescription);
+            $em->flush();
+            return new JsonResponse(['message' => 'Prescription modifiée avec succès.'], Response::HTTP_OK);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Une erreur s\'est produite : ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }    
 }
