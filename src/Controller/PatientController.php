@@ -62,8 +62,6 @@ class PatientController extends AbstractController
     }
 
     // SEARCH PATIENTS
-    
-
     #[Route('/api/patients/search', name: 'searchPatients', methods: ['POST'])]
     public function searchPatients(Request $request, PatientRepository $patientRepository, SerializerInterface $serializer): JsonResponse
     {   
