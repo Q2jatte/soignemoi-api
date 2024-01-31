@@ -24,7 +24,7 @@ class Patient
 
     #[ORM\OneToOne(cascade: ['remove'])]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["getPatients"])]
+    #[Groups(["getPatients", "getEntries"])]
     private ?User $user = null;
 
     #[ORM\OneToMany(mappedBy: 'patient', targetEntity: Comment::class)]

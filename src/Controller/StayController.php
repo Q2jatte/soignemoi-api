@@ -1,6 +1,4 @@
 <?php
-// REGISTER NEW USER PATIENT BY API 
-
 namespace App\Controller;
 
 use App\Entity\Doctor;
@@ -97,14 +95,33 @@ class StayController extends AbstractController
         return new JsonResponse($jsonStays, Response::HTTP_OK, [], true);        
     }
 
-    // GET STAYS BY DOCTOR
+    // GET UNAVAILABLE DAYS OF STAYS FOR ONE DOCTOR
     #[Route('/api/stays/doctor/{id}', name: 'getStaysByDoctor', methods: ['GET'])]
     public function getStaysByDoctor(Doctor $doctor, StayRepository $stayRepository, SerializerInterface $serializer): JsonResponse
     { 
         $staysList = $stayRepository->findStaysByDoctor($doctor);
         $overlappingDays = $this->overlappingDays($staysList);
-        $jsonResult = $serializer->serialize($overlappingDays, 'json');
-        //$jsonStaysList = $serializer->serialize($staysList, 'json', ['groups' => 'getStays']);
+        $jsonResult = $serializer->serialize($overlappingDays, 'json');        
+
+        return new JsonResponse($jsonResult, Response::HTTP_OK, [], true);        
+    }    
+
+    // GET STAYS ENTRIES
+    #[Route('/api/entries', name: 'getEntries', methods: ['GET'])]
+    public function getEntries(StayRepository $stayRepository, SerializerInterface $serializer): JsonResponse
+    { 
+        $entriesList = $stayRepository->findEntries();        
+        $jsonResult = $serializer->serialize($entriesList, 'json', ['groups' => 'getEntries']);
+
+        return new JsonResponse($jsonResult, Response::HTTP_OK, [], true);        
+    }
+
+    // GET STAYS EXITS
+    #[Route('/api/exits', name: 'getExits', methods: ['GET'])]
+    public function getExits(StayRepository $stayRepository, SerializerInterface $serializer): JsonResponse
+    { 
+        $exitsList = $stayRepository->findExits();        
+        $jsonResult = $serializer->serialize($exitsList, 'json', ['groups' => 'getEntries']);
 
         return new JsonResponse($jsonResult, Response::HTTP_OK, [], true);        
     }
@@ -114,14 +131,9 @@ class StayController extends AbstractController
     public function cretateUser(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, ValidatorInterface $validator): JsonResponse
     {
         // Vérification de la desérialisation
-        try {            
-
-            //$stayData = $serializer->deserialize($request->getContent(), Stay::class, 'json'); tellement plus simple mais provoque des erreurs que je n'arrive pas à corriger
-            //dump($stayData);
+        try {           
             $jsonData = $request->getContent();
             $dto = $serializer->deserialize($jsonData, StayDto::class, 'json');
-            
-            
         } catch (NotEncodableValueException | UnexpectedValueException $e) {
             return new JsonResponse(['error' => 'Erreur de désérialisation : ' . $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }       
@@ -145,8 +157,7 @@ class StayController extends AbstractController
             // Définir l'heure à midi (12:00:00) pour les dates d'entrée et de sortie
             $entranceDate = new \DateTime($dto->entranceDate . ' 12:00:00');
             $dischargeDate = new \DateTime($dto->dischargeDate . ' 12:00:00');
-            //$entranceDate = new \DateTime($dto->entranceDate);
-            //$dischergeDate = new \DateTime($dto->dischargeDate);
+            
             $doctor = $em->getRepository(Doctor::class)->find($dto->doctor);            
 
             // Création du nouveau séjour

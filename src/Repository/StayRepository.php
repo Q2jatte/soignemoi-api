@@ -127,4 +127,50 @@ class StayRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    // retourne les patients du jour pour tout les docteurs
+    public function findPatientForAllDoctors(): array
+    {
+        $today = new \DateTime();
+
+        return $this->createQueryBuilder('p')                   
+            ->andWhere('(:today > p.entranceDate AND :today <= p.dischargeDate)')            
+            ->setParameter('today', $today)                             
+            ->getQuery()
+            ->getResult();
+    }
+
+    // Séjour dont l'entrée est aujourd'hui
+    public function findEntries(): array
+    {
+        $today = new \DateTime();
+
+        return $this->createQueryBuilder('p')           
+            ->andWhere('p.entranceDate BETWEEN :dateMin AND :dateMax')
+            ->setParameters(
+                [
+                    'dateMin' => $today->format('Y-m-d 00:00:00'),
+                    'dateMax' => $today->format('Y-m-d 23:59:59'),
+                ]
+            )             
+            ->getQuery()
+            ->getResult();
+    }
+
+    // Séjour dont la sortie est aujourd'hui
+    public function findExits(): array
+    {
+        $today = new \DateTime();
+
+        return $this->createQueryBuilder('p')           
+            ->andWhere('p.dischargeDate BETWEEN :dateMin AND :dateMax')
+            ->setParameters(
+                [
+                    'dateMin' => $today->format('Y-m-d 00:00:00'),
+                    'dateMax' => $today->format('Y-m-d 23:59:59'),
+                ]
+            )             
+            ->getQuery()
+            ->getResult();
+        }
 }

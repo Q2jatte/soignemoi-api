@@ -18,7 +18,7 @@ class Service
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getServices", "getStays", "getProfile"])]
+    #[Groups(["getServices", "getStays", "getProfile", "getEntries"])]
     private ?string $name = null;
 
     #[ORM\OneToMany(mappedBy: 'service', targetEntity: Stay::class)]

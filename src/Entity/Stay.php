@@ -13,7 +13,7 @@ class Stay
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getStays", "getPatients"])]
+    #[Groups(["getStays", "getPatients", "getEntries"])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
@@ -29,19 +29,26 @@ class Stay
     private ?string $reason = null;
 
     #[ORM\ManyToOne]
-    #[Groups(["getPatients"])]
-    #[ORM\JoinColumn(nullable: true)]
-    
+    #[Groups(["getPatients", "getEntries"])]
+    #[ORM\JoinColumn(nullable: true)]    
     private ?Patient $patient = null;
 
     #[ORM\ManyToOne]
-    #[Groups(["getStays"])]
+    #[Groups(["getStays", "getEntries"])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Service $service = null;
 
     #[ORM\ManyToOne(inversedBy: 'stays')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Doctor $doctor = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(["getEntries"])]
+    private ?bool $validEntrance = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(["getEntries"])]
+    private ?bool $validDischarge = null;
 
     public function getId(): ?int
     {
@@ -116,6 +123,30 @@ class Stay
     public function setDoctor(?Doctor $doctor): static
     {
         $this->doctor = $doctor;
+
+        return $this;
+    }
+
+    public function isValidEntrance(): ?bool
+    {
+        return $this->validEntrance;
+    }
+
+    public function setValidEntrance(?bool $validEntrance): static
+    {
+        $this->validEntrance = $validEntrance;
+
+        return $this;
+    }
+
+    public function isValidDischarge(): ?bool
+    {
+        return $this->validDischarge;
+    }
+
+    public function setValidDischarge(?bool $validDischarge): static
+    {
+        $this->validDischarge = $validDischarge;
 
         return $this;
     }

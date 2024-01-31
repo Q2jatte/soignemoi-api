@@ -61,6 +61,20 @@ class PatientController extends AbstractController
         }
     }
 
+    // GET DAILY VISITS FOR ALL DOCTORs
+    #[Route('/api/visits/doctors', name: 'getVisitsForAllDoctors', methods: ['GET'])]
+    public function getVisitsForAllDoctors(StayRepository $stayRepository, SerializerInterface $serializer): JsonResponse
+    {              
+        try {            
+            $patientsList = $stayRepository->findPatientForAllDoctors();
+            $jsonPatientsList = $serializer->serialize($patientsList, 'json', ['groups' => 'getPatients']);
+            
+            return new JsonResponse($jsonPatientsList, Response::HTTP_OK, [], true);   
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => 'Une erreur s\'est produite : ' . $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }                
+    }
+
     // SEARCH PATIENTS
     #[Route('/api/patients/search', name: 'searchPatients', methods: ['POST'])]
     public function searchPatients(Request $request, PatientRepository $patientRepository, SerializerInterface $serializer): JsonResponse
