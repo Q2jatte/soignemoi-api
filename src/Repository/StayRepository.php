@@ -172,5 +172,19 @@ class StayRepository extends ServiceEntityRepository
             )             
             ->getQuery()
             ->getResult();
-        }
+    }
+
+    // Compte les séjours en cours
+    public function findAllCurrentStays()
+    {
+        $today = new \DateTime();
+
+        return $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->andWhere('(:today >= p.entranceDate AND :today <= p.dischargeDate)')
+            ->setParameter('today', $today)           
+            ->getQuery()
+            ->getSingleScalarResult() // Utilisation de getSingleScalarResult pour obtenir un résultat unique
+        ;
+    }
 }

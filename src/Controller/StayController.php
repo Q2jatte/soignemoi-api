@@ -121,9 +121,18 @@ class StayController extends AbstractController
     public function getExits(StayRepository $stayRepository, SerializerInterface $serializer): JsonResponse
     { 
         $exitsList = $stayRepository->findExits();        
-        $jsonResult = $serializer->serialize($exitsList, 'json', ['groups' => 'getEntries']);
+        $jsonResult = $serializer->serialize($exitsList, 'json', ['groups' => 'getExits']);
 
         return new JsonResponse($jsonResult, Response::HTTP_OK, [], true);        
+    }
+
+    // GET CURENT OCCUPATION COUNT
+    #[Route('/api/stay/occupation', name: 'getOccupation', methods: ['GET'])]
+    public function getOccupation(StayRepository $stayRepository, SerializerInterface $serializer): JsonResponse
+    {    
+        $occupation = $stayRepository->findAllCurrentStays();
+        $jsonStay = $serializer->serialize($occupation, 'json');
+        return new JsonResponse($jsonStay, Response::HTTP_OK, [], true);        
     }
 
     // POST NEW STAY

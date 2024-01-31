@@ -13,7 +13,7 @@ class Stay
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getStays", "getPatients", "getEntries"])]
+    #[Groups(["getStays", "getPatients", "getEntries", "getExits"])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
@@ -29,12 +29,12 @@ class Stay
     private ?string $reason = null;
 
     #[ORM\ManyToOne]
-    #[Groups(["getPatients", "getEntries"])]
+    #[Groups(["getPatients", "getEntries", "getExits"])]
     #[ORM\JoinColumn(nullable: true)]    
     private ?Patient $patient = null;
 
     #[ORM\ManyToOne]
-    #[Groups(["getStays", "getEntries"])]
+    #[Groups(["getStays", "getEntries", "getExits"])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Service $service = null;
 
@@ -47,7 +47,7 @@ class Stay
     private ?bool $validEntrance = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(["getEntries"])]
+    #[Groups(["getExits"])]
     private ?bool $validDischarge = null;
 
     public function getId(): ?int

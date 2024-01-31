@@ -78,6 +78,7 @@ security:
         - { path: ^/api/entries, roles: ROLE_STAFF }
         - { path: ^/api/exits, roles: ROLE_STAFF }
         - { path: ^/api/visits/doctors, roles: ROLE_STAFF }
+        - { path: ^/api/stay/occupation, roles: ROLE_STAFF }
         - { path: ^/api/patients, roles: ROLE_DOCTOR } 
         - { path: ^/admin, roles: ROLE_ADMIN }    
 

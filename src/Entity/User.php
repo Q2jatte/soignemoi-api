@@ -30,11 +30,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getDoctor", "getPatients", "searchPatient", "getComments", "getProfile", "getEntries"])]   
+    #[Groups(["getDoctor", "getPatients", "searchPatient", "getComments", "getProfile", "getEntries", "getExits"])]   
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getDoctor", "getPatients", "searchPatient", "getComments", "getProfile", "getEntries"])]    
+    #[Groups(["getDoctor", "getPatients", "searchPatient", "getComments", "getProfile", "getEntries", "getExits"])]    
     private ?string $lastName = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
@@ -43,6 +43,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[Groups(["getProfile"])]
     private ?Doctor $doctor = null;
+
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[Groups(["getProfile"])]
+    private ?Staff $staff = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["getProfile"])]
@@ -169,6 +173,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->doctor = $doctor;
 
+        return $this;
+    }  
+    
+    public function getStaff(): ?Staff
+    {
+        return $this->staff;
+    }
+
+    public function setStaff(?Staff $staff): static
+    {
+        $this->staff = $staff;
         return $this;
     }    
 
