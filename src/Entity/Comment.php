@@ -34,6 +34,7 @@ class Comment
     private ?Doctor $doctor = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
+    #[Groups(["getComments"])]
     private ?patient $patient = null;
 
     public function getId(): ?int
