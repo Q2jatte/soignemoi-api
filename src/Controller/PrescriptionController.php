@@ -1,5 +1,5 @@
 <?php
-// REGISTER NEW USER PATIENT BY API 
+// PRESCRIPTIONS CONTROLLER 
 
 namespace App\Controller;
 
@@ -27,7 +27,7 @@ class PrescriptionController extends AbstractController
     {
         $prescriptions = $prescriptionRepository->findPrescriptionsByPatient($patient);
 
-        if (!$prescriptions) { // Si il n'y a pas de prescription
+        if (!$prescriptions) { // If there are no prescriptions
             return new JsonResponse(['error' => 'Pas de prescription.'], JsonResponse::HTTP_NOT_FOUND);
         }
 
@@ -40,7 +40,7 @@ class PrescriptionController extends AbstractController
     #[Route('/api/prescription/{id}', name: 'getPrescription', methods: ['GET'])]
     public function getPrescription(Prescription $prescription, SerializerInterface $serializer): JsonResponse
     {
-        if (!$prescription) { // Si la prescription n'existe pas
+        if (!$prescription) { // If the prescription does not exist
             return new JsonResponse(['error' => 'Prescription inconnue.'], JsonResponse::HTTP_NOT_FOUND);
         }
 
@@ -53,7 +53,7 @@ class PrescriptionController extends AbstractController
     #[Route('/api/prescription', name: 'createPrescription', methods: ['POST'])]
     public function createPrescription(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, ValidatorInterface $validator): JsonResponse
     {
-        // Vérification de la desérialisation
+        // Check for deserialization
         try {    
             $jsonData = $request->getContent();
             $dto = $serializer->deserialize($jsonData, PrescriptionDto::class, 'json');
@@ -62,7 +62,7 @@ class PrescriptionController extends AbstractController
             return new JsonResponse(['error' => 'Erreur de désérialisation : ' . $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }   
         
-        // Validation des données
+        // Validate data
         $errors = $validator->validate($dto);
         if (count($errors) > 0) {
             $errorMessages = [];
@@ -73,18 +73,18 @@ class PrescriptionController extends AbstractController
         }
 
         try {
-            // Préparation des data
+            // Prepare data
             $user = $this->getUser();
             
             $startAt = new \DateTime($dto->startAt);
             $endAt = new \DateTime($dto->endAt);
 
-            // on répurère le doctor correspondant au token 
+            // Retrieve the doctor corresponding to the token 
             $doctor = $em->getRepository(Doctor::class)->findOneBy(['user' => $user]);  
-            // et le patient avec son id
+            // Retrieve the patient with their ID
             $patient = $em->getRepository(Patient::class)->findOneBy(['id' => $dto->patient['id']]);  
             
-            // Tableau des médications
+            // Array of medications
             $medications = $dto->medications;
             
             $prescription = new Prescription();
@@ -95,8 +95,7 @@ class PrescriptionController extends AbstractController
             $em->persist($prescription);
             $em->flush();
 
-            // Boucle pour ajouter toutes les médications
-            
+            // Loop to add all medications            
             foreach ($medications as $row) {
                 $medication = new Medication();
                 $medication->setName($row['name']);
@@ -116,7 +115,7 @@ class PrescriptionController extends AbstractController
     #[Route('/api/prescription/{id}', name: 'updateEndDatePrescription', methods: ['PATCH'])]
     public function updateEndDatePrescription(Prescription $prescription, Request $request, EntityManagerInterface $em, ValidatorInterface $validator): JsonResponse
     {
-        // Vérification de la desérialisation
+        // Check for deserialization
         try {    
             $jsonData = json_decode($request->getContent(), true);
             $newEnd = new \DateTime($jsonData['date']);
@@ -124,10 +123,10 @@ class PrescriptionController extends AbstractController
             return new JsonResponse(['error' => 'Erreur de désérialisation : ' . $e->getMessage()], Response::HTTP_BAD_REQUEST);
         } 
         
-        // Modification de la date
+        // Modify the date
         $prescription->setEndAt($newEnd);
         
-        // Enregistrment de la prescription modifiée
+        // Save the modified prescription
         try {
             
             $em->persist($prescription);

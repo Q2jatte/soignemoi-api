@@ -1,4 +1,6 @@
 <?php
+// STAYS CONTROLLER
+
 namespace App\Controller;
 
 use App\Entity\Doctor;
@@ -24,13 +26,13 @@ class StayController extends AbstractController
     #[Route('/api/patients/{id}/stays/{status}', name: 'getStaysByPatientAndStatus', methods: ['GET'])]
     public function getStaysByPatientAndStatus(Patient $patient, $status, StayRepository $stayRepository, SerializerInterface $serializer): JsonResponse
     {
-        // Vérifier le statut pour s'assurer qu'il est valide (current, old, future ou all)
+        // Check the status to ensure it is valid (current, old, future, or all)
         $validStatuses = ['current', 'old', 'future', 'all'];
         if (!in_array($status, $validStatuses)) {
             return new JsonResponse(['error' => 'Statut de séjour invalide.'], Response::HTTP_BAD_REQUEST);
         }
 
-        // Obtenir les séjours en fonction du patient et du statut  
+        // Get stays based on patient and status 
         if (!$patient) {
             return new JsonResponse(['error' => 'Patient non trouvé.'], Response::HTTP_NOT_FOUND);
         }
@@ -71,7 +73,7 @@ class StayController extends AbstractController
     {    
         $stay = $stayRepository->findCurrentStay($patient);
 
-        if (!$stay) { // Si il n'y a pas de séjour en cours
+        if (!$stay) { // If there is no current stay
             return new JsonResponse(['error' => 'Pas de séjour en cours.'], JsonResponse::HTTP_NOT_FOUND);
         }
 
@@ -86,7 +88,7 @@ class StayController extends AbstractController
     {    
         $stays = $stayRepository->findOldStays($patient);
 
-        if (!$stays) { // Si il n'y a pas de séjour en cours
+        if (!$stays) { // If there is no current stay
             return new JsonResponse(['error' => 'Pas de séjour précédent.'], JsonResponse::HTTP_NOT_FOUND);
         }
 
@@ -139,7 +141,7 @@ class StayController extends AbstractController
     #[Route('/api/stay', name: 'createStay', methods: ['POST'])]
     public function cretateUser(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, ValidatorInterface $validator): JsonResponse
     {
-        // Vérification de la desérialisation
+        // Check for deserialization
         try {           
             $jsonData = $request->getContent();
             $dto = $serializer->deserialize($jsonData, StayDto::class, 'json');
@@ -147,7 +149,7 @@ class StayController extends AbstractController
             return new JsonResponse(['error' => 'Erreur de désérialisation : ' . $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }       
 
-        // Validation des données
+        // Validation of data
         $errors = $validator->validate($dto);
         if (count($errors) > 0) {
             $errorMessages = [];
@@ -157,19 +159,19 @@ class StayController extends AbstractController
             return $this->json(['errors' => $errorMessages], Response::HTTP_BAD_REQUEST);
         }
         
-        // enregistrement du séjour
+        // Save the stay
         try {
-            // Préparation des data
+            // Prepare data
             $user = $this->getUser();
             $patient = $user->getPatient();
 
-            // Définir l'heure à midi (12:00:00) pour les dates d'entrée et de sortie
+            // Set the time to noon (12:00:00) for entrance and discharge dates
             $entranceDate = new \DateTime($dto->entranceDate . ' 12:00:00');
             $dischargeDate = new \DateTime($dto->dischargeDate . ' 12:00:00');
             
             $doctor = $em->getRepository(Doctor::class)->find($dto->doctor);            
 
-            // Création du nouveau séjour
+            // Create the new stay
             $stay = new Stay();
             $stay->setPatient($patient);
             $stay->setReason($dto->reason);
@@ -178,7 +180,6 @@ class StayController extends AbstractController
             $stay->setDoctor($doctor);            
             $stay->setService($doctor->getService());
 
-            //dump($stay);
             $em->persist($stay);
             $em->flush();
 
@@ -188,22 +189,22 @@ class StayController extends AbstractController
         }
     }
 
-    // Méthodes métier
-    // Retourne une liste de jours ou le max de séjours est atteint
+    // Business methods
+    // Returns a list of days where the maximum stays is reached
     private function overlappingDays($stays): array
     {
-        // Récupérer la variable MAX_STAYS_PER_DAY à partir du conteneur de services
+        // Get MAX_STAYS_PER_DAY variable from the service container
         $maxStaysPerDay = $_ENV['MAX_STAYS_PER_DAY'] ?? null;
 
-        // Créer un tableau pour stocker le nombre de séjours par jour
+        // Create an array to store the number of stays per day
         $stayCountByDay = [];
 
-        // Parcourir la liste des séjours
+        // Iterate through the list of stays
         foreach ($stays as $stay) {
             $entranceDate = $stay->getEntranceDate()->format('Y-m-d');
             $dischargeDate = $stay->getDischargeDate()->format('Y-m-d');
 
-            // Incrémenter le nombre de séjours pour chaque jour entre entranceDate et dischargeDate
+            // Increment the number of stays for each day between entranceDate and dischargeDate
             $currentDate = new \DateTime($entranceDate);
             while ($currentDate <= $stay->getDischargeDate()) {
                 $currentDateString = $currentDate->format('Y-m-d');
@@ -212,12 +213,12 @@ class StayController extends AbstractController
             }
         }
 
-        // Filtrer les jours où le nombre de séjours est de 5 ou plus
+        // Filter the days where the number of stays is 5 or more
         $overlappingDays = array_filter($stayCountByDay, function ($count) use ($maxStaysPerDay) {
             return $count >= $maxStaysPerDay;
         });
 
-        // Retourner la liste des jours où la limite est atteinte ou dépassée
+        // Return the list of days where the limit is reached or exceeded
         $result = array_keys($overlappingDays);
 
         return $result;

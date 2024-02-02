@@ -1,5 +1,5 @@
 <?php
-// REGISTER NEW USER PATIENT BY API 
+// USERS CONTROLLER 
 
 namespace App\Controller;
 
@@ -22,21 +22,20 @@ class UserController extends AbstractController
     #[Route('/api/user/signup', name: 'createUser', methods: ['POST'])]
     public function cretateUser(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher, ValidatorInterface $validator): JsonResponse
     {
-        // Vérification de la desérialisation
+        // Check for deserialization
         try {
             $userData = json_decode($request->getContent(), true);
 
-            // Extraction de l'adresse du tableau associé aux données de l'utilisateur
+            // Extract address from the array associated with user data
             $address = $userData['address'] ?? null;
-            unset($userData['address']); // Suppression de l'adresse du tableau des données de l'utilisateur
-
+            unset($userData['address']); // Remove address from the user data array
             $user = $serializer->deserialize(json_encode($userData), User::class, 'json');
             
         } catch (NotEncodableValueException $e) {
             return new JsonResponse(['error' => 'Erreur de désérialisation : ' . $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }        
 
-        // Validation des données
+        // Validation of data
         $errors = $validator->validate($user);
         if (count($errors) > 0) {
             $errorMessages = [];
@@ -46,10 +45,10 @@ class UserController extends AbstractController
             return $this->json(['errors' => $errorMessages], Response::HTTP_BAD_REQUEST);
         }
 
-        // Mot de passe brut
+        // Raw password
         $plaintextPassword = $user->getPassword();
         
-        // Hasher le mot de passe
+        // Hash the password
         $hashedPassword = $passwordHasher->hashPassword(
             $user,
             $plaintextPassword
@@ -58,16 +57,16 @@ class UserController extends AbstractController
 
         $user->setRoles(['ROLE_USER']);
         
-        // enregistrement du user
+        // Save the user
         try {
             $em->persist($user);
             $em->flush();
 
-            // création du patient associé au user            
+            // Create the patient associated with the user            
             $patient = new Patient();
             $patient->setUser($user);
 
-            // Ajout de l'adresse au patient
+            // Add address to the patient
             if ($address !== null) {
                 $patient->setAddress($address);
             }
@@ -81,7 +80,7 @@ class UserController extends AbstractController
         }  
     }
 
-    // Retourne les infos du profil en fonction du groupe utlisateur
+    // Get profile information based on the user group
     #[Route('/api/user/profile', name: 'getProfile', methods: ['GET'])]
     public function getProfile(UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
     {
@@ -94,9 +93,9 @@ class UserController extends AbstractController
         }
 
         $profile = $userRepository->find($id);
-        // serialization des données
+        // Serialize data
         $jsonData = $serializer->serialize($profile, 'json', ['groups' => 'getProfile']);
-        // réponse
+        // Response
         return new JsonResponse($jsonData, Response::HTTP_OK, [], true);  
     }
 }

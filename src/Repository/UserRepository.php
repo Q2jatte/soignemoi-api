@@ -38,7 +38,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
-    // retourne les patients en fonction d'une partie du nom
+    // Return searched text patients
     
     public function findPatient($partial): array
     {   

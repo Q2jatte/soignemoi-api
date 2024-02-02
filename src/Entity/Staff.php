@@ -47,7 +47,7 @@ class Staff
     public function setUser(User $user): static
     {
         $this->user = $user;        
-
+        $user->setStaff($this); // Valeur inverse dans user
         return $this;
     }    
 }

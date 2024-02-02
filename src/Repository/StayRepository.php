@@ -21,7 +21,7 @@ class StayRepository extends ServiceEntityRepository
         parent::__construct($registry, Stay::class);
     }
 
-    // Une fonction pour les remplcer toutes
+    // Function to replace all others
     public function findStaysByPatientAndStatus($patient, $status): array
     {        
         $today = new \DateTime();
@@ -53,7 +53,7 @@ class StayRepository extends ServiceEntityRepository
         }             
     }
 
-    // Tout les séjours d'un patient
+    // All stays of a patient
     public function findStaysByPatient($patient): array
     {
         return $this->createQueryBuilder('p')
@@ -65,7 +65,7 @@ class StayRepository extends ServiceEntityRepository
         ;
     }
 
-    // Séjour en cours d'un patient
+    // Current stay of a patient
     public function findCurrentStay($patient): array
     {
         $today = new \DateTime();
@@ -81,7 +81,7 @@ class StayRepository extends ServiceEntityRepository
         ;
     }
 
-    // Séjours précédent d'un patient
+    // Previous stays of a patient
     public function findOldStays($patient): array
     {
         $today = new \DateTime();
@@ -97,7 +97,7 @@ class StayRepository extends ServiceEntityRepository
         ;
     }
 
-    // retourne les séjours en cours et à venir
+    // Returns current and future stays
     public function findStaysByDoctor($doctor): array
     {
         $today = new \DateTime();
@@ -113,7 +113,7 @@ class StayRepository extends ServiceEntityRepository
         ;
     }
 
-    // retourne les patients du jour pour un docteur
+    // Returns patients of the day for a doctor
     public function findPatientByDoctor($doctor): array
     {
         $today = new \DateTime();
@@ -128,7 +128,7 @@ class StayRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    // retourne les patients du jour pour tout les docteurs
+    // Returns patients of the day for all doctors
     public function findPatientForAllDoctors(): array
     {
         $today = new \DateTime();
@@ -140,7 +140,7 @@ class StayRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    // Séjour dont l'entrée est aujourd'hui
+    // Stays whose entrance is today
     public function findEntries(): array
     {
         $today = new \DateTime();
@@ -157,7 +157,7 @@ class StayRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    // Séjour dont la sortie est aujourd'hui
+    // Stays whose exit is today
     public function findExits(): array
     {
         $today = new \DateTime();
@@ -174,7 +174,7 @@ class StayRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    // Compte les séjours en cours
+    // Count current stays
     public function findAllCurrentStays()
     {
         $today = new \DateTime();

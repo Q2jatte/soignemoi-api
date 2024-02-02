@@ -65,8 +65,8 @@ security:
         - { path: ^/api/recaptchaverify, roles: PUBLIC_ACCESS }       
         - { path: ^/api/stay, roles: IS_AUTHENTICATED_FULLY }  
         - { path: ^/api/stays, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }  
-        - { path: ^/api/user/profile, roles: IS_AUTHENTICATED_FULLY }        
+        - { path: ^/api/user/profile, roles: IS_AUTHENTICATED_FULLY }  
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }        
         - { path: ^/api/patients, roles: ROLE_STAFF }
         - { path: ^/api/patients/search, roles: ROLE_STAFF } 
         - { path: ^/api/patients/current, roles: ROLE_STAFF } 
@@ -79,7 +79,6 @@ security:
         - { path: ^/api/exits, roles: ROLE_STAFF }
         - { path: ^/api/visits/doctors, roles: ROLE_STAFF }
         - { path: ^/api/stay/occupation, roles: ROLE_STAFF }
-        - { path: ^/api/patients, roles: ROLE_DOCTOR } 
         - { path: ^/admin, roles: ROLE_ADMIN }    
 
 when@test:

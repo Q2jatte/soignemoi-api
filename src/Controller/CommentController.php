@@ -1,5 +1,5 @@
 <?php
-// REGISTER NEW USER PATIENT BY API 
+// COMMENTS CONTROLLER
 
 namespace App\Controller;
 
@@ -27,7 +27,7 @@ class CommentController extends AbstractController
     {
         $comments = $commentRepository->findCommentsByPatient($patient);
 
-        if (!$comments) { // Si il n'y a pas de prescription
+        if (!$comments) { // If there are no comments
             return new JsonResponse(['error' => 'Pas de commentaire.'], JsonResponse::HTTP_NOT_FOUND);
         }
 
@@ -40,7 +40,7 @@ class CommentController extends AbstractController
     #[Route('/api/comment/{id}', name: 'getComment', methods: ['GET'])]
     public function getComment(Comment $comment, SerializerInterface $serializer): JsonResponse
     {
-        if (!$comment) { // Si le commentaire n'existe pas
+        if (!$comment) { // If there are no comments
             return new JsonResponse(['error' => 'Commentaire inconnue.'], JsonResponse::HTTP_NOT_FOUND);
         }
 
@@ -53,7 +53,7 @@ class CommentController extends AbstractController
     #[Route('/api/comment', name: 'createComment', methods: ['POST'])]
     public function createCommentw(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, ValidatorInterface $validator): JsonResponse
     {
-        // Vérification de la desérialisation
+        // Check deserialization
         try {    
             $jsonData = $request->getContent();
             $dto = $serializer->deserialize($jsonData, CommentDto::class, 'json');
@@ -62,7 +62,7 @@ class CommentController extends AbstractController
             return new JsonResponse(['error' => 'Erreur de désérialisation : ' . $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }   
         
-        // Validation des données
+        // Data validation
         $errors = $validator->validate($dto);
         if (count($errors) > 0) {
             $errorMessages = [];
@@ -73,18 +73,17 @@ class CommentController extends AbstractController
         }
 
         try {
-            // Préparation des data
+            // Prepare data
             $user = $this->getUser();
             
             $createAt = new \DateTime($dto->createAt);
             
-
-            // on répurère le doctor correspondant au token 
+            // Retrieve the doctor corresponding to the token 
             $doctor = $em->getRepository(Doctor::class)->findOneBy(['user' => $user]);  
-            // et le patient avec son id
+            // And the patient with their ID
             $patient = $em->getRepository(Patient::class)->findOneBy(['id' => $dto->patient['id']]);  
             
-            // comment            
+            // Create the comment           
             $comment = new Comment();
             $comment->setTitle($dto->title);
             $comment->setContent($dto->content);

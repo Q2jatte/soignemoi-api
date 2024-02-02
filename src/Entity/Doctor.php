@@ -63,7 +63,7 @@ class Doctor
     public function setUser(User $user): static
     {
         $this->user = $user;
-
+        $user->setDoctor($this); // Valeur inverse dans user
         return $this;
     }
 
