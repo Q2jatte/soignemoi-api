@@ -26,7 +26,7 @@ class CommentRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('c')            
             ->andWhere('c.patient = :val')
             ->setParameter('val', $patient)
-            ->orderBy('c.createAt', 'DESC')            
+            ->orderBy('c.id', 'DESC')            
             ->getQuery()
             ->getResult();
     }

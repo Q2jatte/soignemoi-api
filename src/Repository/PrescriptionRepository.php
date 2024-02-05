@@ -27,7 +27,7 @@ class PrescriptionRepository extends ServiceEntityRepository
             ->leftJoin('p.medications', 'm')
             ->andWhere('p.patient = :val')
             ->setParameter('val', $patient)
-            ->orderBy('p.startAt', 'DESC')           
+            ->orderBy('p.id', 'DESC')           
             ->getQuery()
             ->getResult();
     }

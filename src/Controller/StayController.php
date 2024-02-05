@@ -165,9 +165,9 @@ class StayController extends AbstractController
             $user = $this->getUser();
             $patient = $user->getPatient();
 
-            // Set the time to noon (12:00:00) for entrance and discharge dates
-            $entranceDate = new \DateTime($dto->entranceDate . ' 12:00:00');
-            $dischargeDate = new \DateTime($dto->dischargeDate . ' 12:00:00');
+            // Set the time to noon (12:00:00) for entrance and discharge dates            
+            $entranceDate = new \DateTime(substr($dto->entranceDate, 0, 11) . '12:00:00' . '.000Z');
+            $dischargeDate = new \DateTime(substr($dto->dischargeDate, 0, 11) . '12:00:00' . '.000Z');            
             
             $doctor = $em->getRepository(Doctor::class)->find($dto->doctor);            
 
